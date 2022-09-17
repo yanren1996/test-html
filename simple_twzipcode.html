@@ -1,10 +1,22 @@
 <title>Simple twzipcode</title>
 
-<div id="twzipcode"></div>
+<div id="twzipcode">
+    <div id="zipcode" data-role="zipcode" data-name="zipcode"></div>
+    <div data-role="county" data-name="cty"></div>
+    <div data-role="district" data-name="town"></div>
+</div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-twzipcode@1.7.15-rc1/jquery.twzipcode.min.js"></script>
 
 <script>
     $('#twzipcode').twzipcode();
+    $('#zipcode').hide();//隱藏郵遞區號
 </script>
+
+
+<!--
+    *** twzipcode (台灣行政區下拉選單生成器) ***
+    說明文件 -> https://code.essoduke.org/twzipcode/#n-methods-destroy
+    Github -> https://github.com/essoduke/jQuery-TWzipcode
+-->

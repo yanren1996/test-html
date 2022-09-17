@@ -1,0 +1,81 @@
+<title>Simple Map2</title>
+
+<div id="twzipcode">
+  <div id="zipcode" data-role="zipcode" data-name="zipcode"></div>
+  <div id="cty" data-role="county" data-name="cty"></div>
+  <div id="town" data-role="district" data-name="town"></div>
+</div>
+<div>
+  <input type="number" step="0.02" id="marklat" value="24.50" disabled>
+  <input type="number" step="0.02" id="marklng" value="121.00" disabled>
+</div>
+<div id="map" style="height: 400px;width: 500px"></div>
+<div>
+  地圖中心點(lat:<label id="maplat">24.50</label>,lng:<label id="maplng">121.00</label>)
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+<!-- twzipcode (台灣行政區下拉選單生成器) -->
+<script src="https://cdn.jsdelivr.net/npm/jquery-twzipcode@1.7.15-rc1/jquery.twzipcode.min.js"></script>
+<!-- GoogleMap -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap&v=weekly" defer></script>
+
+<!-- google地圖設定 -->
+<script>
+  let map;
+  let mark;
+  const defPos = { lat: 25.02, lng: 121.54 };
+
+  function initMap() {
+    map = new google.maps.Map($('#map').get(0), {
+      center: defPos,
+      zoom: 9
+    });
+    map.addListener('center_changed', function () {
+      $('#maplng').text(map.getCenter().lng);
+      $('#maplat').text(map.getCenter().lat);
+    });
+    map.addListener('click', (mapsMouseEvent) => {
+      mark.setPosition(mapsMouseEvent.latLng);
+      $('#marklng').val(mark.getPosition().lng);
+      $('#marklat').val(mark.getPosition().lat);
+      syncForm($('#marklng').val(), $('#marklat').val());
+    });
+
+    mark = new google.maps.Marker({
+      position: defPos,
+      map
+    });
+    mark.setDraggable(true);
+    mark.addListener('drag', function () {
+      $('#marklng').val(mark.getPosition().lng);
+      $('#marklat').val(mark.getPosition().lat);
+    });
+    mark.addListener('dragend', function () {
+      syncForm($('#marklng').val(), $('#marklat').val())
+    });
+  }
+
+  $(window).initMap = initMap;
+
+  // 經緯度查詢縣市 (來源:內政部國土測繪中心api)
+  function syncForm(lng, lat) {
+    const httpGet = 'https://api.nlsc.gov.tw/other/TownVillagePointQuery1/' +
+      lng + '/' +
+      lat + '/4326';
+
+    $.get(httpGet, function (xml) {
+      const data = $(xml).find('townVillageItem');
+      $('#cty > select').val(data.children('ctyName').text());
+      $('#cty > select').change();// 更新鄉鎮市下拉選單
+      $('#town > select').val(data.children('townName').text());
+    });
+  }
+</script>
+
+<!-- 下拉選單設定 -->
+<script>
+  $('#twzipcode').twzipcode();
+  $('#zipcode').hide();// 隱藏郵遞區號
+</script>
