@@ -1,0 +1,28 @@
+<title>Simple gps</title>
+
+緯度<label id="lat"></label>
+經度<label id="lng"></label>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
+<script>
+  let lat, lng;
+  if (navigator.geolocation) {
+    alert('支援地理位置');
+    navigator.geolocation.getCurrentPosition(
+      function (position) {
+        alert('允許存取位置資訊');
+        lat = position.coords.latitude;
+        lng = position.coords.longitude;
+        $('#lat').text(lat);
+        $('#lng').text(lng);
+      }, function () {
+        alert('拒絕存取位置資訊');
+      });
+  } else {
+    // 不支援地理位置
+  }
+
+  $('#lat').text(lat);
+  $('#lng').text(lng);
+</script>

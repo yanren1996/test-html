@@ -1,4 +1,4 @@
-<title>Simple Map2</title>
+<title>Simple Map3</title>
 
 <div id="twzipcode">
   <div id="zipcode" data-role="zipcode" data-name="zipcode"></div>
@@ -25,7 +25,7 @@
 <script>
   let map;
   let mark;
-  const defPos = { lat: 25.02, lng: 121.54 };
+  let defPos = { lat: 25.02, lng: 121.54 };
 
   var updateMap = function () {
     $('#maplng').text(map.getCenter().lng);
@@ -64,6 +64,18 @@
 
   $(window).initMap = initMap;
   $(function () {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function (position) {
+        defPos.lat = position.coords.latitude;
+        defPos.lng = position.coords.longitude;
+        map.panTo(defPos);
+        map.setZoom(13);
+        updateMap();
+        mark.setPosition(defPos);
+        updateMark();
+        syncForm($('#marklng').val(), $('#marklat').val());
+      });
+    }
     updateMap();
     updateMark();
     syncForm($('#marklng').val(), $('#marklat').val());
